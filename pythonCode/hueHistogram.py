@@ -19,11 +19,14 @@ bin_w = 4
 histogramImageWidth = histogramSize * 4
 histogramImageHeight = histogramSize * 4
 
-#caluculate histogram
+#caluculate histogram. Since the values in Hue channel range from 0 to 179, so we keep number of bin as 180.
+#First argument is H channel, 2nd is the channel number of the image which is 0 here as we are just passing a single channel image.
+#The 3rd argument is the mask which is None here as we want the whole matrix , 4th argument is number of bins and 5th argument is
+# range of histogram values
 histogram = cv2.calcHist([h], [0], None, [histogramSize], [0, histogramSize])
 print(histogram)
 
-#Normalize the histogram
+#Normalize the histogram to make sure the histogram fits in the plot
 cv2.normalize(histogram, histogram, 0, histogramSize*3, cv2.NORM_MINMAX, -1)
 print(histogram)
 
@@ -41,7 +44,8 @@ cv2.line(histogramImage, (0, histogramImageHeight - 30), (histogramImageWidth, h
 cv2.line(histogramImage, (0, histogramImageHeight - 20), (0, histogramImageHeight - 40), (0, 0, 0), 2, 8, 0)
 cv2.putText(histogramImage, "0", (0, int(histogramImageHeight - (30/2))), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
 
-#draw histogram as line on empty image
+#draw histogram as line on empty image. We go over each value of the histogram and draw a line between current and previous points. 
+#We also put the x-axis value after every 20 values.
 for i in range(1, histogramSize):
     cv2.line(histogramImage, ((bin_w*(i-1)), histogramImageHeight - 30 - histogram[i-1]), ((bin_w*i), histogramImageHeight - 30 - histogram[i]), 
         (0, 0, 255), 2, 8, 0)
